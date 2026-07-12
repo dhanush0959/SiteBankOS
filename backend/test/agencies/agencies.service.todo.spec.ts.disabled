@@ -1,0 +1,161 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { AgenciesService } from '../../src/agencies/agencies.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
+import { StorageService } from '../../src/storage/storage.service';
+import { AuditService } from '../../src/audit/audit.service';
+
+const OWNER_ID = 'owner-cuid-001';
+const OTHER_USER_ID = 'other-cuid-002';
+const AGENCY_ID = 'agency-cuid-001';
+
+function makeAgency(overrides: Partial<{ ownerUserId: string; id: string }> = {}) {
+  return {
+    id: AGENCY_ID,
+    name: 'Acme Realty',
+    logoUrl: null,
+    ownerUserId: OWNER_ID,
+    address: null,
+    customDomain: null,
+    brandingSettings: null,
+    status: 'ACTIVE' as const,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides,
+  };
+}
+
+function makePrismaMock() {
+  return {
+    agency: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      findMany: jest.fn(),
+      count: jest.fn(),
+    },
+    user: {
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      findMany: jest.fn(),
+    },
+    $transaction: jest.fn(),
+  };
+}
+
+function makeStorageMock() {
+  return {
+    generateKey: jest.fn().mockReturnValue('agencies/agency-001/logo.webp'),
+    uploadImage: jest.fn().mockResolvedValue({ cdnUrl: 'https://cdn.example.com/logo.webp' }),
+  };
+}
+
+function makeAuditMock() {
+  return { log: jest.fn().mockResolvedValue(undefined) };
+}
+
+describe('AgenciesService', () => {
+  let service: AgenciesService;
+  let prisma: ReturnType<typeof makePrismaMock>;
+  let audit: ReturnType<typeof makeAuditMock>;
+
+  beforeEach(async () => {
+    prisma = makePrismaMock();
+    audit = makeAuditMock();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AgenciesService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: StorageService, useValue: makeStorageMock() },
+        { provide: AuditService, useValue: audit },
+      ],
+    }).compile();
+
+    service = module.get<AgenciesService>(AgenciesService);
+  });
+
+  // ── createForOwner ─────────────────────────────────────────────────────────
+
+  describe('createForOwner', () => {
+    it('throws ConflictException if user already owns an agency', async () => {
+      (prisma.agency.findUnique as jest.Mock).mockResolvedValue(makeAgency());
+
+      await expect(
+        service.createForOwner(OWNER_ID, { name: 'New Agency' }),
+      ).rejects.toBeInstanceOf(ConflictException);
+    });
+
+    it('creates agency and updates user atomically via transaction', async () => {
+      (prisma.agency.findUnique as jest.Mock).mockResolvedValue(null);
+
+      const createdAgency = makeAgency();
+      (prisma.$transaction as jest.Mock).mockImplementation(
+        async (cb: (tx: typeof prisma) => Promise<unknown>) => {
+          const txMock = {
+            agency: { create: jest.fn().mockResolvedValue(createdAgency) },
+            user: { update: jest.fn().mockResolvedValue({}) },
+          };
+          return cb(txMock as unknown as typeof prisma);
+        },
+      );
+
+      const result = await service.createForOwner(OWNER_ID, { name: 'New Agency' });
+
+      expect(result).toEqual(createdAgency);
+      expect(audit.log).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'create_agency', entityType: 'Agency' }),
+      );
+    });
+  });
+
+  // ── removeMember ───────────────────────────────────────────────────────────
+
+  describe('removeMember', () => {
+    it('throws ForbiddenException when trying to remove the owner', async () => {
+      (prisma.agency.findUnique as jest.Mock).mockResolvedValue(makeAgency());
+
+      await expect(
+        service.removeMember(AGENCY_ID, OWNER_ID, OWNER_ID),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('throws ForbiddenException when non-owner tries to remove a member', async () => {
+      (prisma.agency.findUnique as jest.Mock).mockResolvedValue(makeAgency());
+
+      await expect(
+        service.removeMember(AGENCY_ID, OTHER_USER_ID, 'member-001'),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('detaches member and audit-logs when called by owner', async () => {
+      (prisma.agency.findUnique as jest.Mock).mockResolvedValue(makeAgency());
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 'member-001',
+        agencyId: AGENCY_ID,
+      });
+      (prisma.user.update as jest.Mock).mockResolvedValue({ id: 'member-001', agencyId: null });
+
+      await service.removeMember(AGENCY_ID, OWNER_ID, 'member-001');
+
+      expect(prisma.user.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { agencyId: null } }),
+      );
+      expect(audit.log).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'remove_member', entityType: 'Agency' }),
+      );
+    });
+
+    it('throws NotFoundException when member is not in the agency', async () => {
+      (prisma.agency.findUnique as jest.Mock).mockResolvedValue(makeAgency());
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 'member-001',
+        agencyId: 'different-agency',
+      });
+
+      await expect(
+        service.removeMember(AGENCY_ID, OWNER_ID, 'member-001'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+  });
+});

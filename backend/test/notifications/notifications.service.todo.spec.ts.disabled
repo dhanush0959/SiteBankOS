@@ -1,0 +1,278 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { NotificationsService } from '../../src/notifications/notifications.service';
+
+// ── Config factory ─────────────────────────────────────────────────────────────
+
+function makeConfig(overrides: Record<string, unknown> = {}): Partial<ConfigService> {
+  const defaults: Record<string, unknown> = {
+    FEATURE_EMAIL: false,
+    FEATURE_WHATSAPP: false,
+    FRONTEND_URL: 'https://sitebank.in',
+    EMAIL_FROM: 'SiteBank <noreply@sitebank.in>',
+    RESEND_API_KEY: undefined,
+    WHATSAPP_TOKEN: undefined,
+    WHATSAPP_PHONE_NUMBER_ID: undefined,
+    ...overrides,
+  };
+
+  return {
+    get: jest.fn(<T>(key: string): T => defaults[key] as T),
+  };
+}
+
+// ── Resend mock ────────────────────────────────────────────────────────────────
+
+const mockResendSend = jest.fn();
+
+jest.mock('resend', () => ({
+  Resend: jest.fn().mockImplementation(() => ({
+    emails: {
+      send: mockResendSend,
+    },
+  })),
+}));
+
+// ── fetch mock ─────────────────────────────────────────────────────────────────
+
+const mockFetch = jest.fn();
+global.fetch = mockFetch as typeof fetch;
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+async function buildService(configOverrides: Record<string, unknown> = {}): Promise<NotificationsService> {
+  const module: TestingModule = await Test.createTestingModule({
+    providers: [
+      NotificationsService,
+      { provide: ConfigService, useValue: makeConfig(configOverrides) },
+    ],
+  }).compile();
+
+  return module.get<NotificationsService>(NotificationsService);
+}
+
+// ── Tests ──────────────────────────────────────────────────────────────────────
+
+describe('NotificationsService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // ── sendEmail: feature flag off ────────────────────────────────────────────
+
+  describe('sendEmail — FEATURE_EMAIL=false', () => {
+    it('returns { skipped: true } and does not call Resend', async () => {
+      const service = await buildService({ FEATURE_EMAIL: false });
+
+      const result = await service.sendEmail({
+        to: 'agent@example.com',
+        subject: 'Hello',
+        html: '<p>Hello</p>',
+      });
+
+      expect(result).toEqual({ skipped: true });
+      expect(mockResendSend).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── sendEmail: feature flag on, key present ────────────────────────────────
+
+  describe('sendEmail — FEATURE_EMAIL=true', () => {
+    it('calls Resend SDK with correct params and returns id', async () => {
+      mockResendSend.mockResolvedValue({ data: { id: 'resend_msg_123' }, error: null });
+
+      const service = await buildService({
+        FEATURE_EMAIL: true,
+        RESEND_API_KEY: 're_test_key',
+      });
+
+      const result = await service.sendEmail({
+        to: 'agent@example.com',
+        subject: 'Test Subject',
+        html: '<p>Test</p>',
+        text: 'Test',
+      });
+
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      const callArg = mockResendSend.mock.calls[0][0] as {
+        to: string[];
+        subject: string;
+        html: string;
+        from: string;
+      };
+      expect(callArg.to).toEqual(['agent@example.com']);
+      expect(callArg.subject).toBe('Test Subject');
+      expect(callArg.html).toContain('Test');
+      expect(result).toEqual({ id: 'resend_msg_123' });
+    });
+
+    it('returns { skipped: true } when RESEND_API_KEY is missing', async () => {
+      const service = await buildService({
+        FEATURE_EMAIL: true,
+        RESEND_API_KEY: undefined,
+      });
+
+      const result = await service.sendEmail({
+        to: 'agent@example.com',
+        subject: 'Test',
+        html: '<p>Test</p>',
+      });
+
+      expect(result).toEqual({ skipped: true });
+      expect(mockResendSend).not.toHaveBeenCalled();
+    });
+
+    it('returns { skipped: true } when Resend throws', async () => {
+      mockResendSend.mockRejectedValue(new Error('Network error'));
+
+      const service = await buildService({
+        FEATURE_EMAIL: true,
+        RESEND_API_KEY: 're_test_key',
+      });
+
+      const result = await service.sendEmail({
+        to: 'agent@example.com',
+        subject: 'Test',
+        html: '<p>Test</p>',
+      });
+
+      expect(result).toEqual({ skipped: true });
+    });
+  });
+
+  // ── emailNewLead: subject + html content ──────────────────────────────────
+
+  describe('emailNewLead', () => {
+    it('composes correct subject and html includes property title', async () => {
+      mockResendSend.mockResolvedValue({ data: { id: 'resend_lead_1' }, error: null });
+
+      const service = await buildService({
+        FEATURE_EMAIL: true,
+        RESEND_API_KEY: 're_test_key',
+      });
+
+      await service.emailNewLead(
+        { name: 'Agent A', email: 'agent@example.com' },
+        { name: 'Buyer B', phone: '9876543210', propertyTitle: 'Luxury Villa in Goa' },
+      );
+
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      const callArg = mockResendSend.mock.calls[0][0] as {
+        subject: string;
+        html: string;
+      };
+      expect(callArg.subject).toContain('Luxury Villa in Goa');
+      expect(callArg.html).toContain('Luxury Villa in Goa');
+    });
+  });
+
+  // ── sendWhatsApp: E.164 normalisation ─────────────────────────────────────
+
+  describe('sendWhatsApp — phone normalisation', () => {
+    it('converts a 10-digit Indian number to +91 E.164 format', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({ messages: [{ id: 'wamid_abc' }] }),
+        text: async () => '',
+      });
+
+      const service = await buildService({
+        FEATURE_WHATSAPP: true,
+        WHATSAPP_TOKEN: 'wa_token',
+        WHATSAPP_PHONE_NUMBER_ID: 'ph_id_123',
+      });
+
+      await service.sendWhatsApp({ to: '9876543210', body: 'Hello' });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const [, fetchInit] = mockFetch.mock.calls[0] as [string, RequestInit];
+      const sentBody = JSON.parse(fetchInit.body as string) as { to: string };
+      expect(sentBody.to).toBe('+919876543210');
+    });
+
+    it('preserves number already in E.164 with +91 prefix', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({ messages: [{ id: 'wamid_xyz' }] }),
+        text: async () => '',
+      });
+
+      const service = await buildService({
+        FEATURE_WHATSAPP: true,
+        WHATSAPP_TOKEN: 'wa_token',
+        WHATSAPP_PHONE_NUMBER_ID: 'ph_id_123',
+      });
+
+      await service.sendWhatsApp({ to: '+919876543210', body: 'Hello' });
+
+      const [, fetchInit] = mockFetch.mock.calls[0] as [string, RequestInit];
+      const sentBody = JSON.parse(fetchInit.body as string) as { to: string };
+      expect(sentBody.to).toBe('+919876543210');
+    });
+  });
+
+  // ── sendWhatsApp: feature flag off ────────────────────────────────────────
+
+  describe('sendWhatsApp — FEATURE_WHATSAPP=false', () => {
+    it('returns { skipped: true } and does not call fetch', async () => {
+      const service = await buildService({ FEATURE_WHATSAPP: false });
+
+      const result = await service.sendWhatsApp({ to: '9876543210', body: 'Hello' });
+
+      expect(result).toEqual({ skipped: true });
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── sendWhatsApp: keys missing ─────────────────────────────────────────────
+
+  describe('sendWhatsApp — missing keys', () => {
+    it('returns { skipped: true } when WHATSAPP_TOKEN is missing', async () => {
+      const service = await buildService({
+        FEATURE_WHATSAPP: true,
+        WHATSAPP_TOKEN: undefined,
+        WHATSAPP_PHONE_NUMBER_ID: 'ph_id_123',
+      });
+
+      const result = await service.sendWhatsApp({ to: '9876543210', body: 'Hello' });
+
+      expect(result).toEqual({ skipped: true });
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── sendWhatsApp: non-2xx throws InternalServerErrorException ────────────
+
+  describe('sendWhatsApp — non-2xx response', () => {
+    it('throws InternalServerErrorException on non-2xx when feature is on', async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 401,
+        text: async () => 'Unauthorized',
+        json: async () => ({}),
+      });
+
+      const service = await buildService({
+        FEATURE_WHATSAPP: true,
+        WHATSAPP_TOKEN: 'wa_token',
+        WHATSAPP_PHONE_NUMBER_ID: 'ph_id_123',
+      });
+
+      await expect(service.sendWhatsApp({ to: '9876543210', body: 'Hello' })).rejects.toThrow(
+        'WhatsApp send failed',
+      );
+    });
+  });
+
+  // ── whatsappNewLead: does not throw ────────────────────────────────────────
+
+  describe('whatsappNewLead', () => {
+    it('does not throw when sendWhatsApp is skipped (feature off)', async () => {
+      const service = await buildService({ FEATURE_WHATSAPP: false });
+
+      await expect(
+        service.whatsappNewLead('9876543210', { propertyTitle: 'Studio Apt', name: 'Lead X' }),
+      ).resolves.toBeUndefined();
+    });
+  });
+});

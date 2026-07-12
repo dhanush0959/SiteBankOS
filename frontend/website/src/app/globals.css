@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    /* ─── Light Mode ─── Green/Teal SiteBank Theme */
+    --background: 0 0% 97.5%;      /* #F9F9F9 light gray bg */
+    --foreground: 150 10% 15%;      /* Near-black with green undertone */
+    --card: 0 0% 100%;              /* Pure white cards */
+    --card-foreground: 150 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 10% 15%;
+    --primary: 150 20% 20%;         /* Dark olive green – sidebar & primary */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 150 8% 95%;
+    --secondary-foreground: 150 10% 15%;
+    --muted: 150 8% 95%;
+    --muted-foreground: 150 5% 50%;
+    --accent: 162 63% 41%;          /* Teal/Emerald – buttons & accents */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 10% 90%;
+    --input: 150 10% 90%;
+    --ring: 162 63% 41%;
+    --radius: 0.75rem;
+
+    /* ─── Sidebar ─── */
+    --sidebar-bg: 150 18% 18%;     /* Dark olive green #2D3B2D */
+    --sidebar-fg: 0 0% 96%;
+    --sidebar-muted: 150 12% 25%;
+    --sidebar-accent: 162 63% 41%; /* Teal accent */
+  }
+
+  .dark {
+    /* ─── Dark Mode ─── Deep Green/Teal */
+    --background: 150 15% 6%;
+    --foreground: 0 0% 96%;
+    --card: 150 15% 9%;
+    --card-foreground: 0 0% 96%;
+    --popover: 150 15% 9%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 150 20% 20%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 150 10% 15%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 150 10% 15%;
+    --muted-foreground: 150 5% 60%;
+    --accent: 162 63% 41%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 10% 15%;
+    --input: 150 10% 15%;
+    --ring: 162 63% 41%;
+
+    /* ─── Sidebar (same in dark) ─── */
+    --sidebar-bg: 150 18% 14%;
+    --sidebar-fg: 0 0% 96%;
+    --sidebar-muted: 150 12% 20%;
+    --sidebar-accent: 162 63% 41%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-accent/30 selection:text-accent-foreground;
+    font-family: 'Plus Jakarta Sans', 'Inter var', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  /* Fix for browser autofill background color */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
+      -webkit-text-fill-color: hsl(var(--foreground)) !important;
+      transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+@layer utilities {
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+
+  /* ─── Advanced Glassmorphism Utilities ─── */
+  .premium-glass {
+    @apply bg-white dark:bg-[#0f1a14] border border-white/20 dark:border-white/5;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+  .premium-glass-card {
+    @apply bg-card dark:bg-card border border-border/50 dark:border-white/5;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  .premium-glass-panel {
+    @apply bg-background border-t border-white/20 dark:border-white/5;
+  }
+
+  /* ─── Solid Colors ─── */
+  .bg-primary-gradient {
+    @apply bg-accent text-white border-0;
+  }
+  
+  .gradient-text-vibrant {
+    @apply text-accent font-bold;
+  }
+
+  /* ─── Hover Animations ─── */
+  .hover-lift {
+    @apply transition-all duration-500;
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px -12px rgba(45, 59, 45, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  /* ─── Ambient Background Glows ─── */
+  .mesh-bg-blob {
+    @apply absolute rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse-slow pointer-events-none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+
+  /* ─── Sidebar specific ─── */
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
+  }
+  .sidebar-nav-item-active {
+    @apply bg-white/10 text-white;
+  }
+}
+
+/* Keyframes */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes slide-in-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(45, 59, 45, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(45, 59, 45, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(45, 59, 45, 0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-pulse-slow { animation: pulse-slow 6s ease-in-out infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-slide-in-down { animation: slide-in-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-up-fade { animation: slide-up-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-glow-pulse { animation: glow-pulse 2s infinite; }
+.animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+.animate-spin-slow { animation: spin-slow 2s linear infinite; }
+.animate-scale-in { animation: scale-in 0.3s ease-out forwards; }

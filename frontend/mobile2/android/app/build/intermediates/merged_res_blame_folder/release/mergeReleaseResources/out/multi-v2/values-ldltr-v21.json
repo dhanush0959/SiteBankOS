@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.sitebank.app-mergeReleaseResources-3:/values-ldltr-v21/values-ldltr-v21.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\TARUN KUMAR\\.gradle\\caches\\9.3.1\\transforms\\3c8b6bf0c08c679b837726672ac7f7c7\\workspace\\transformed\\appcompat-1.7.1\\res\\values-ldltr-v21\\values-ldltr-v21.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "112",
+                        "endOffsets": "163"
+                    }
+                }
+            ]
+        }
+    ]
+}

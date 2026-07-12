@@ -1,0 +1,10 @@
+R_DEF: Internal format may change without notice
+local
+color orange_600
+color splash_bg
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+drawable ic_splash
+mipmap ic_launcher
+style Theme.SiteBank
+style Theme.SiteBank.Splash

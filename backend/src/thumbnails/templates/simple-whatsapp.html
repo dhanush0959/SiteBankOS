@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+  .poster {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #075e54;
+    overflow: hidden;
+  }
+
+
+  .bg-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,0.1) 0%,
+      rgba(0,0,0,0.3) 50%,
+      rgba(0,0,0,0.75) 85%,
+      rgba(0,0,0,0.9) 100%
+    );
+  }
+
+  .content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 48px 56px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .headline {
+    font-size: 64px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+    max-width: 900px;
+  }
+
+  .price {
+    font-size: 72px;
+    font-weight: 800;
+    color: #f97316;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .location {
+    font-size: 26px;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .specs {
+    font-size: 24px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 48px;
+    padding: 14px 28px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+  }
+
+  .cta {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    background: #f97316;
+    padding: 20px 60px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 24px rgba(249,115,22,0.35);
+  }
+
+  .branding {
+    font-size: 16px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <img class="bg-image" src="{{coverUrl}}" alt="" crossorigin="anonymous" />
+  <div class="overlay"></div>
+
+  <div class="content">
+    <div class="headline">{{headline}}</div>
+    <div class="price">{{price}}</div>
+    <div class="location">📍 {{location}}</div>
+    <div class="specs">{{keySpec}}</div>
+    <span class="cta">📞 {{ctaText}}</span>
+    <span class="branding">{{brandingText}}</span>
+  </div>
+</div>
+</div>
+</body>
+</html>

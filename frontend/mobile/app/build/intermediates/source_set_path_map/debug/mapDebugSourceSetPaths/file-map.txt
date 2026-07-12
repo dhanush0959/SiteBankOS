@@ -1,0 +1,68 @@
+com.sitebank.android.app-pngs-0 C:\Projects\SiteBank\frontend\mobile\app\build\generated\res\pngs\debug
+com.sitebank.android.app-resValues-1 C:\Projects\SiteBank\frontend\mobile\app\build\generated\res\resValues\debug
+com.sitebank.android.app-packageDebugResources-2 C:\Projects\SiteBank\frontend\mobile\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.sitebank.android.app-packageDebugResources-3 C:\Projects\SiteBank\frontend\mobile\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.sitebank.android.app-debug-4 C:\Projects\SiteBank\frontend\mobile\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.sitebank.android.app-debug-5 C:\Projects\SiteBank\frontend\mobile\app\src\debug\res
+com.sitebank.android.app-main-6 C:\Projects\SiteBank\frontend\mobile\app\src\main\res
+com.sitebank.android.app-animation-release-7 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\033ded290842cb1a1c7222713ade1baf\transformed\animation-release\res
+com.sitebank.android.app-runtime-release-8 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\063936bca62b63c7a5aaaf1f27f7cbf9\transformed\runtime-release\res
+com.sitebank.android.app-activity-compose-1.9.3-9 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\094b23bc2a89a9e42ba236b54a89efaa\transformed\activity-compose-1.9.3\res
+com.sitebank.android.app-lifecycle-livedata-core-2.8.7-10 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\11bb990209ab644ff46ecf23e5dfb803\transformed\lifecycle-livedata-core-2.8.7\res
+com.sitebank.android.app-ui-graphics-release-11 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\13fd5de84666ed1143c64cb09a1a1938\transformed\ui-graphics-release\res
+com.sitebank.android.app-annotation-experimental-1.4.1-12 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\177ff93924d16933badf84fc88a8d20f\transformed\annotation-experimental-1.4.1\res
+com.sitebank.android.app-core-1.15.0-13 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\188b03f44aa57e85591687280a0abf6c\transformed\core-1.15.0\res
+com.sitebank.android.app-ui-tooling-data-release-14 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\1f440e8f2f993ffcfd40e64035f661b9\transformed\ui-tooling-data-release\res
+com.sitebank.android.app-material-ripple-release-15 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\206e75f80d026dea10ecf5ce463165f0\transformed\material-ripple-release\res
+com.sitebank.android.app-ui-text-release-16 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\2ac50b248b412b7f0e5127f938d550f6\transformed\ui-text-release\res
+com.sitebank.android.app-ui-util-release-17 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\3276ca802ff4b5ccfa0d3c70b0756696\transformed\ui-util-release\res
+com.sitebank.android.app-customview-poolingcontainer-1.0.0-18 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\3605725bf53656fc2d7e2c309ea9f35c\transformed\customview-poolingcontainer-1.0.0\res
+com.sitebank.android.app-hilt-navigation-compose-1.2.0-19 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\44ef3327e614f1c33aabe1d0e850523d\transformed\hilt-navigation-compose-1.2.0\res
+com.sitebank.android.app-profileinstaller-1.3.1-20 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\44f31a8f934a5029bed042c72fe01a2d\transformed\profileinstaller-1.3.1\res
+com.sitebank.android.app-ui-tooling-release-21 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\45730de22c3993cc828b60a56dc544e2\transformed\ui-tooling-release\res
+com.sitebank.android.app-material-icons-extended-release-22 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\45bf4685bd5198ed664f936a14f83e89\transformed\material-icons-extended-release\res
+com.sitebank.android.app-savedstate-ktx-1.2.1-23 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\47d2ed20aa830a977be0be2c35ff3350\transformed\savedstate-ktx-1.2.1\res
+com.sitebank.android.app-core-runtime-2.2.0-24 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\4ac3bd706cfac89d6b95e28c99992d7f\transformed\core-runtime-2.2.0\res
+com.sitebank.android.app-core-ktx-1.15.0-25 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\4cc94388cdc47b2ad4bfd95b09e70237\transformed\core-ktx-1.15.0\res
+com.sitebank.android.app-lifecycle-runtime-compose-release-26 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\4fb26675cce2216749b0d0cea0de3501\transformed\lifecycle-runtime-compose-release\res
+com.sitebank.android.app-lifecycle-runtime-release-27 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\51eca98e1f5ae858cbd24b874adf0c60\transformed\lifecycle-runtime-release\res
+com.sitebank.android.app-material-release-28 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\56a8e1f33198bc3dedd5a9a55a69c959\transformed\material-release\res
+com.sitebank.android.app-navigation-common-ktx-2.8.4-29 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\57e36845389b2820db7243887edc7bba\transformed\navigation-common-ktx-2.8.4\res
+com.sitebank.android.app-datastore-preferences-release-30 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\5dff8c3219e29e79ed6ea3d7f584e978\transformed\datastore-preferences-release\res
+com.sitebank.android.app-lifecycle-viewmodel-compose-release-31 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\607f0584ee02f97a88685cf671d70474\transformed\lifecycle-viewmodel-compose-release\res
+com.sitebank.android.app-foundation-release-32 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\631c519fe42db0ded71a48cfdb21306c\transformed\foundation-release\res
+com.sitebank.android.app-navigation-runtime-ktx-2.8.4-33 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\64646b6f943be9aa85b5ef37a26a73e2\transformed\navigation-runtime-ktx-2.8.4\res
+com.sitebank.android.app-navigation-runtime-2.8.4-34 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\6a766a978f1e597bc246e1a0a7915b60\transformed\navigation-runtime-2.8.4\res
+com.sitebank.android.app-ui-unit-release-35 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\7707af285eb64e35b1ee31db9f0665c4\transformed\ui-unit-release\res
+com.sitebank.android.app-lifecycle-livedata-2.8.7-36 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\864ba5f14dd90339534b082c1e6be9bf\transformed\lifecycle-livedata-2.8.7\res
+com.sitebank.android.app-material3-release-37 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\8a1dc69ecd892794a169cd82bc469128\transformed\material3-release\res
+com.sitebank.android.app-hilt-navigation-1.2.0-38 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\8b01643841cd7eb29c682c961eeb0fab\transformed\hilt-navigation-1.2.0\res
+com.sitebank.android.app-navigation-compose-2.8.4-39 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\8b09a528528edce66dbea5f5f5291e20\transformed\navigation-compose-2.8.4\res
+com.sitebank.android.app-foundation-layout-release-40 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\8cbe743646b5a96f69c5eb26bf34abdc\transformed\foundation-layout-release\res
+com.sitebank.android.app-savedstate-1.2.1-41 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\8d00e7ba00d7c45d228278a92775213b\transformed\savedstate-1.2.1\res
+com.sitebank.android.app-coil-base-2.7.0-42 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\a1d97d82bb6ad8d941d4442b9c2ee053\transformed\coil-base-2.7.0\res
+com.sitebank.android.app-appcompat-resources-1.6.1-43 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\a5397d8e7ed9bce4921a903e54ca6df3\transformed\appcompat-resources-1.6.1\res
+com.sitebank.android.app-activity-ktx-1.9.3-44 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\a82872e6a79f4da60a1cebd20e85c7ca\transformed\activity-ktx-1.9.3\res
+com.sitebank.android.app-animation-core-release-45 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\b6124ed178f726ab53e540b2795a45ca\transformed\animation-core-release\res
+com.sitebank.android.app-emoji2-1.3.0-46 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\b805e5d87c191c04de1db01647392869\transformed\emoji2-1.3.0\res
+com.sitebank.android.app-graphics-path-1.0.1-47 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\b85cf25c4c374cc0b2f0015b5e588ea9\transformed\graphics-path-1.0.1\res
+com.sitebank.android.app-datastore-core-release-48 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\bbdd1e85e672f6c33773305f85554f2f\transformed\datastore-core-release\res
+com.sitebank.android.app-material-icons-core-release-49 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\bc30f57be013add836e649730a1e137f\transformed\material-icons-core-release\res
+com.sitebank.android.app-lifecycle-runtime-ktx-release-50 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\bc5475288ef09a9d0eec9210d75a0b05\transformed\lifecycle-runtime-ktx-release\res
+com.sitebank.android.app-ui-geometry-release-51 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\bd8d6946ac80e34b77df995597b3af49\transformed\ui-geometry-release\res
+com.sitebank.android.app-datastore-release-52 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\cc28fb47013c82b52ad66ab58703efbd\transformed\datastore-release\res
+com.sitebank.android.app-lifecycle-viewmodel-release-53 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\ce74de3b882b3d8e4f719d527904e797\transformed\lifecycle-viewmodel-release\res
+com.sitebank.android.app-activity-1.9.3-54 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\d30db3d7204cb2b89ddfc3c70d1ececf\transformed\activity-1.9.3\res
+com.sitebank.android.app-tracing-1.2.0-55 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\d59f8c57c933205955712be5de58c428\transformed\tracing-1.2.0\res
+com.sitebank.android.app-navigation-common-2.8.4-56 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\d6a8c3ba4a3268ff19370104ba4a4434\transformed\navigation-common-2.8.4\res
+com.sitebank.android.app-lifecycle-viewmodel-savedstate-2.8.7-57 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\d89d57add501d0787780de3e7a7d5ae0\transformed\lifecycle-viewmodel-savedstate-2.8.7\res
+com.sitebank.android.app-ui-tooling-preview-release-58 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\d8fe795071fd914af18c9c99eed6abed\transformed\ui-tooling-preview-release\res
+com.sitebank.android.app-core-splashscreen-1.0.1-59 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\dbdefb005a46012af80941716bedb3f5\transformed\core-splashscreen-1.0.1\res
+com.sitebank.android.app-fragment-1.5.1-60 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\dca18193bf3353e15ea66486fdd07237\transformed\fragment-1.5.1\res
+com.sitebank.android.app-runtime-saveable-release-61 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\dd457341aa5e493e474ed3a4f5dae602\transformed\runtime-saveable-release\res
+com.sitebank.android.app-lifecycle-livedata-core-ktx-2.8.7-62 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\e0f181b8acf2986e9feec037f2c93061\transformed\lifecycle-livedata-core-ktx-2.8.7\res
+com.sitebank.android.app-lifecycle-process-2.8.7-63 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\e60e1a06bf3e998c469431df0ba5f6f0\transformed\lifecycle-process-2.8.7\res
+com.sitebank.android.app-ui-test-manifest-1.7.4-64 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\ec50734d50836426c017e2c554dca02f\transformed\ui-test-manifest-1.7.4\res
+com.sitebank.android.app-startup-runtime-1.1.1-65 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\f30c8a42da256e5044544beedeecbc15\transformed\startup-runtime-1.1.1\res
+com.sitebank.android.app-ui-release-66 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\fea97b0456d9432f361c0d90237fb8a4\transformed\ui-release\res
+com.sitebank.android.app-lifecycle-viewmodel-ktx-2.8.7-67 C:\Users\TARUN KUMAR\.gradle\caches\8.11.1\transforms\fff952a6748d35beb17e5ab87fb04ea9\transformed\lifecycle-viewmodel-ktx-2.8.7\res

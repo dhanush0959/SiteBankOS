@@ -1,0 +1,173 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
+import { UserStatus } from '@prisma/client';
+import { AdminService } from '../../src/admin/admin.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
+import { AuditService } from '../../src/audit/audit.service';
+
+const SUPER_ADMIN_ID = 'superadmin-cuid-001';
+const USER_ID = 'user-cuid-001';
+
+function makeUser(overrides: Partial<{ id: string; status: UserStatus }> = {}) {
+  return {
+    id: USER_ID,
+    name: 'Test User',
+    email: 'test@example.com',
+    phone: null,
+    role: 'AGENT' as const,
+    status: UserStatus.ACTIVE,
+    agencyId: null,
+    reraNumber: null,
+    isVerified: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    profilePhotoUrl: null,
+    ...overrides,
+  };
+}
+
+function makePrismaMock() {
+  return {
+    user: {
+      count: jest.fn().mockResolvedValue(10),
+      findUnique: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+      update: jest.fn(),
+    },
+    agency: {
+      count: jest.fn().mockResolvedValue(3),
+      findUnique: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+      update: jest.fn(),
+    },
+    property: {
+      count: jest.fn().mockResolvedValue(25),
+      findUnique: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+      update: jest.fn(),
+    },
+    smartLink: {
+      count: jest.fn().mockResolvedValue(50),
+    },
+    lead: {
+      count: jest.fn().mockResolvedValue(100),
+    },
+    subscription: {
+      count: jest.fn(),
+    },
+  };
+}
+
+function makeAuditMock() {
+  return { log: jest.fn().mockResolvedValue(undefined) };
+}
+
+describe('AdminService', () => {
+  let service: AdminService;
+  let prisma: ReturnType<typeof makePrismaMock>;
+  let audit: ReturnType<typeof makeAuditMock>;
+
+  beforeEach(async () => {
+    prisma = makePrismaMock();
+    audit = makeAuditMock();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AdminService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: AuditService, useValue: audit },
+      ],
+    }).compile();
+
+    service = module.get<AdminService>(AdminService);
+  });
+
+  // ── getStats ───────────────────────────────────────────────────────────────
+
+  describe('getStats', () => {
+    it('returns all expected keys', async () => {
+      (prisma.subscription.count as jest.Mock)
+        .mockResolvedValueOnce(5)   // ACTIVE
+        .mockResolvedValueOnce(8);  // TRIAL
+
+      const stats = await service.getStats();
+
+      expect(stats).toHaveProperty('users');
+      expect(stats).toHaveProperty('agencies');
+      expect(stats).toHaveProperty('properties');
+      expect(stats).toHaveProperty('smartLinks');
+      expect(stats).toHaveProperty('leads');
+      expect(stats).toHaveProperty('subscriptionsActive');
+      expect(stats).toHaveProperty('subscriptionsTrial');
+    });
+
+    it('returns numeric values for all keys', async () => {
+      (prisma.subscription.count as jest.Mock)
+        .mockResolvedValueOnce(5)
+        .mockResolvedValueOnce(8);
+
+      const stats = await service.getStats();
+
+      for (const key of Object.keys(stats)) {
+        expect(typeof stats[key as keyof typeof stats]).toBe('number');
+      }
+    });
+  });
+
+  // ── suspendUser ────────────────────────────────────────────────────────────
+
+  describe('suspendUser', () => {
+    it('sets user.status to SUSPENDED', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(makeUser());
+      (prisma.user.update as jest.Mock).mockResolvedValue(makeUser({ status: UserStatus.SUSPENDED }));
+
+      await service.suspendUser(USER_ID, SUPER_ADMIN_ID);
+
+      expect(prisma.user.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { status: UserStatus.SUSPENDED } }),
+      );
+    });
+
+    it('writes an audit log entry', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(makeUser());
+      (prisma.user.update as jest.Mock).mockResolvedValue(makeUser({ status: UserStatus.SUSPENDED }));
+
+      await service.suspendUser(USER_ID, SUPER_ADMIN_ID);
+
+      expect(audit.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: 'suspend_user',
+          entityType: 'User',
+          entityId: USER_ID,
+          actorUserId: SUPER_ADMIN_ID,
+        }),
+      );
+    });
+
+    it('throws NotFoundException when user does not exist', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.suspendUser('nonexistent', SUPER_ADMIN_ID)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
+  });
+
+  // ── searchUsers ────────────────────────────────────────────────────────────
+
+  describe('searchUsers', () => {
+    it('returns paginated results with total', async () => {
+      const mockUsers = [makeUser()];
+      (prisma.user.findMany as jest.Mock).mockResolvedValue(mockUsers);
+      (prisma.user.count as jest.Mock).mockResolvedValue(1);
+
+      const result = await service.searchUsers({ page: 1, pageSize: 20 });
+
+      expect(result).toHaveProperty('items');
+      expect(result).toHaveProperty('total');
+      expect(result).toHaveProperty('page');
+      expect(result).toHaveProperty('pageSize');
+      expect(result.items).toEqual(mockUsers);
+    });
+  });
+});

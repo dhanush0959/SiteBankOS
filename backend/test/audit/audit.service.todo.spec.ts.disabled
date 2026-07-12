@@ -1,0 +1,133 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuditService } from '../../src/audit/audit.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
+
+const AGENCY_ID = 'agency-cuid-001';
+const ACTOR_ID = 'actor-cuid-001';
+const OTHER_ACTOR_ID = 'other-actor-002';
+
+function makePrismaMock() {
+  return {
+    auditLog: {
+      create: jest.fn().mockResolvedValue({}),
+      findMany: jest.fn().mockResolvedValue([]),
+      findUnique: jest.fn(),
+      count: jest.fn().mockResolvedValue(0),
+    },
+    user: {
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+    },
+  };
+}
+
+describe('AuditService', () => {
+  let service: AuditService;
+  let prisma: ReturnType<typeof makePrismaMock>;
+
+  beforeEach(async () => {
+    prisma = makePrismaMock();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuditService,
+        { provide: PrismaService, useValue: prisma },
+      ],
+    }).compile();
+
+    service = module.get<AuditService>(AuditService);
+  });
+
+  // ── log ────────────────────────────────────────────────────────────────────
+
+  describe('log', () => {
+    it('creates an audit log record', async () => {
+      await service.log({
+        actorUserId: ACTOR_ID,
+        action: 'test_action',
+        entityType: 'User',
+        entityId: ACTOR_ID,
+      });
+
+      expect(prisma.auditLog.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            actorUserId: ACTOR_ID,
+            action: 'test_action',
+          }),
+        }),
+      );
+    });
+
+    it('skips creating a record for system events', async () => {
+      await service.log({
+        actorUserId: 'system',
+        action: 'system_event',
+        entityType: 'User',
+        entityId: 'any-id',
+      });
+
+      expect(prisma.auditLog.create).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── query with agency scope ────────────────────────────────────────────────
+
+  describe('query with agency scope', () => {
+    it('filters results by agency member ids', async () => {
+      const agencyMembers = [{ id: ACTOR_ID }, { id: OTHER_ACTOR_ID }];
+      (prisma.user.findMany as jest.Mock).mockResolvedValue(agencyMembers);
+
+      const mockItems = [
+        { id: 'log-1', actorUserId: ACTOR_ID, action: 'some_action' },
+      ];
+      (prisma.auditLog.findMany as jest.Mock).mockResolvedValue(mockItems);
+      (prisma.auditLog.count as jest.Mock).mockResolvedValue(1);
+
+      const result = await service.query({}, { agencyId: AGENCY_ID });
+
+      // Should have looked up members
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { agencyId: AGENCY_ID } }),
+      );
+
+      // Should have filtered by member ids
+      expect(prisma.auditLog.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            actorUserId: { in: [ACTOR_ID, OTHER_ACTOR_ID] },
+          }),
+        }),
+      );
+
+      expect(result.items).toEqual(mockItems);
+      expect(result.total).toBe(1);
+    });
+
+    it('returns empty results when requested actorUserId is not in the agency', async () => {
+      (prisma.user.findMany as jest.Mock).mockResolvedValue([{ id: ACTOR_ID }]);
+
+      const result = await service.query(
+        { actorUserId: 'outside-actor' },
+        { agencyId: AGENCY_ID },
+      );
+
+      expect(result.items).toEqual([]);
+      expect(result.total).toBe(0);
+      // Should not query audit logs for out-of-scope actor
+      expect(prisma.auditLog.findMany).not.toHaveBeenCalled();
+    });
+
+    it('queries all records when no agency scope (SUPER_ADMIN)', async () => {
+      const mockItems = [{ id: 'log-1', actorUserId: ACTOR_ID }];
+      (prisma.auditLog.findMany as jest.Mock).mockResolvedValue(mockItems);
+      (prisma.auditLog.count as jest.Mock).mockResolvedValue(1);
+
+      const result = await service.query({}, {});
+
+      // Should NOT look up members for super admin
+      expect(prisma.user.findMany).not.toHaveBeenCalled();
+      expect(result.items).toEqual(mockItems);
+    });
+  });
+});

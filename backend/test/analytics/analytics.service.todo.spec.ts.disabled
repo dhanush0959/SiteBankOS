@@ -1,0 +1,272 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { AnalyticsService } from '../../src/analytics/analytics.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const USER_ID = 'user-cuid-001';
+const OTHER_USER_ID = 'user-cuid-other';
+const PROPERTY_ID = 'property-cuid-001';
+const SMART_LINK_ID = 'sl-cuid-001';
+
+// ── Mock factories ────────────────────────────────────────────────────────────
+
+function makePrismaMock() {
+  return {
+    property: {
+      count: jest.fn().mockResolvedValue(0),
+      findUnique: jest.fn(),
+    },
+    smartLink: {
+      count: jest.fn().mockResolvedValue(0),
+      findUnique: jest.fn(),
+    },
+    linkEvent: {
+      count: jest.fn().mockResolvedValue(0),
+    },
+    lead: {
+      count: jest.fn().mockResolvedValue(0),
+    },
+    $queryRaw: jest.fn().mockResolvedValue([]),
+  };
+}
+
+// ── Tests ─────────────────────────────────────────────────────────────────────
+
+describe('AnalyticsService', () => {
+  let service: AnalyticsService;
+  let prisma: ReturnType<typeof makePrismaMock>;
+
+  beforeEach(async () => {
+    prisma = makePrismaMock();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AnalyticsService,
+        { provide: PrismaService, useValue: prisma },
+      ],
+    }).compile();
+
+    service = module.get<AnalyticsService>(AnalyticsService);
+  });
+
+  // ── getDashboard ─────────────────────────────────────────────────────────────
+
+  describe('getDashboard', () => {
+    it('returns zero totals and empty arrays when there is no data', async () => {
+      // All counts return 0 (default mock)
+      // $queryRaw returns [] for timeseries, uniqueVisitors, and topProperties
+      (prisma.$queryRaw as jest.Mock)
+        // uniqueVisitors
+        .mockResolvedValueOnce([{ count: BigInt(0) }])
+        // timeseries
+        .mockResolvedValueOnce([])
+        // topProperties
+        .mockResolvedValueOnce([]);
+
+      const result = await service.getDashboard(USER_ID, '30d');
+
+      expect(result.range).toBe('30d');
+      expect(result.totals.properties).toBe(0);
+      expect(result.totals.activeProperties).toBe(0);
+      expect(result.totals.smartLinks).toBe(0);
+      expect(result.totals.totalViews).toBe(0);
+      expect(result.totals.uniqueVisitors).toBe(0);
+      expect(result.totals.leads).toBe(0);
+      expect(result.totals.hotLeads).toBe(0);
+      expect(result.timeseries).toEqual([]);
+      expect(result.topProperties).toEqual([]);
+      expect(result.funnel.views).toBe(0);
+      expect(result.funnel.contactClicks).toBe(0);
+      expect(result.funnel.leadSubmissions).toBe(0);
+      expect(result.funnel.conversionPct).toBe(0);
+    });
+
+    it('computes conversionPct correctly when there are views and leads', async () => {
+      // views = 100, leadSubmissions = 10 → 10.0%
+      let callIndex = 0;
+      (prisma.linkEvent.count as jest.Mock).mockImplementation(() => {
+        callIndex += 1;
+        // First call is VIEW count
+        if (callIndex === 1) return Promise.resolve(100);
+        // CLICK_CONTACT
+        if (callIndex === 2) return Promise.resolve(30);
+        // LEAD_FORM_SUBMIT
+        if (callIndex === 3) return Promise.resolve(10);
+        return Promise.resolve(0);
+      });
+
+      (prisma.$queryRaw as jest.Mock)
+        .mockResolvedValueOnce([{ count: BigInt(50) }])  // uniqueVisitors
+        .mockResolvedValueOnce([])                          // timeseries
+        .mockResolvedValueOnce([]);                         // topProperties
+
+      const result = await service.getDashboard(USER_ID, '30d');
+
+      expect(result.funnel.conversionPct).toBe(10.0);
+    });
+
+    it('passes correct since date for 7d range', async () => {
+      (prisma.$queryRaw as jest.Mock)
+        .mockResolvedValueOnce([{ count: BigInt(0) }])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]);
+
+      await service.getDashboard(USER_ID, '7d');
+
+      // The $queryRaw was called — verify the range is correct by checking
+      // that property.count was called with gte filter for ~7 days ago
+      const countCalls = (prisma.property.count as jest.Mock).mock.calls;
+      expect(countCalls.length).toBeGreaterThan(0);
+
+      // Verify result range label is returned
+      const result = await service.getDashboard(USER_ID, '7d').then((r) => r.range);
+      expect(result).toBe('7d');
+    });
+  });
+
+  // ── getPropertyAnalytics ──────────────────────────────────────────────────────
+
+  describe('getPropertyAnalytics', () => {
+    it('throws ForbiddenException when user does not own the property', async () => {
+      (prisma.property.findUnique as jest.Mock).mockResolvedValue({
+        ownerUserId: OTHER_USER_ID,
+      });
+
+      await expect(
+        service.getPropertyAnalytics(USER_ID, PROPERTY_ID, '30d'),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('throws NotFoundException when property does not exist', async () => {
+      (prisma.property.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        service.getPropertyAnalytics(USER_ID, PROPERTY_ID, '30d'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('returns correct summary shape when user owns the property', async () => {
+      (prisma.property.findUnique as jest.Mock).mockResolvedValue({
+        ownerUserId: USER_ID,
+      });
+      (prisma.linkEvent.count as jest.Mock).mockResolvedValue(5);
+      (prisma.$queryRaw as jest.Mock)
+        // uniqueVisitors
+        .mockResolvedValueOnce([{ count: BigInt(3) }])
+        // avgs
+        .mockResolvedValueOnce([{ avgTime: 45.5, avgScroll: 60.0 }])
+        // timeseries
+        .mockResolvedValueOnce([])
+        // referrers
+        .mockResolvedValueOnce([])
+        // devices
+        .mockResolvedValueOnce([]);
+
+      const result = await service.getPropertyAnalytics(USER_ID, PROPERTY_ID, '30d');
+
+      expect(result.range).toBe('30d');
+      expect(result.summary.uniqueVisitors).toBe(3);
+      expect(result.summary.avgTimeOnPageSec).toBe(46); // Math.round(45.5)
+      expect(result.summary.avgScrollDepthPct).toBe(60);
+      expect(result.timeseries).toEqual([]);
+      expect(result.referrers).toEqual([]);
+      expect(result.devices).toEqual([]);
+    });
+  });
+
+  // ── getSmartLinkAnalytics ─────────────────────────────────────────────────────
+
+  describe('getSmartLinkAnalytics', () => {
+    it('throws ForbiddenException when user does not own the property for the smart link', async () => {
+      (prisma.smartLink.findUnique as jest.Mock).mockResolvedValue({
+        propertyId: PROPERTY_ID,
+        property: { ownerUserId: OTHER_USER_ID },
+      });
+
+      await expect(
+        service.getSmartLinkAnalytics(USER_ID, SMART_LINK_ID, '30d'),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('throws NotFoundException when smart link does not exist', async () => {
+      (prisma.smartLink.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        service.getSmartLinkAnalytics(USER_ID, SMART_LINK_ID, '30d'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+  });
+
+  // ── getLiveCount ──────────────────────────────────────────────────────────────
+
+  describe('getLiveCount', () => {
+    it('returns event count scoped to all user properties when no propertyId given', async () => {
+      (prisma.linkEvent.count as jest.Mock).mockResolvedValue(42);
+
+      const result = await service.getLiveCount(USER_ID, undefined, 15);
+
+      expect(result.count).toBe(42);
+      expect(result.minutes).toBe(15);
+      expect(result.propertyId).toBeNull();
+    });
+
+    it('throws ForbiddenException when propertyId belongs to another user', async () => {
+      (prisma.property.findUnique as jest.Mock).mockResolvedValue({
+        ownerUserId: OTHER_USER_ID,
+      });
+
+      await expect(
+        service.getLiveCount(USER_ID, PROPERTY_ID, 15),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('throws NotFoundException when propertyId does not exist', async () => {
+      (prisma.property.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        service.getLiveCount(USER_ID, PROPERTY_ID, 15),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+  });
+
+  // ── range parsing ─────────────────────────────────────────────────────────────
+
+  describe('range parsing', () => {
+    it('7d range produces since ~7 days ago', async () => {
+      (prisma.$queryRaw as jest.Mock)
+        .mockResolvedValueOnce([{ count: BigInt(0) }])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]);
+
+      const before = new Date();
+      before.setDate(before.getDate() - 7);
+
+      await service.getDashboard(USER_ID, '7d');
+
+      // Check that linkEvent.count was called with a gte date ~7 days ago
+      const countCalls = (prisma.linkEvent.count as jest.Mock).mock.calls;
+      const firstCall = countCalls[0]?.[0] as {
+        where: { createdAt: { gte: Date } };
+      } | undefined;
+
+      if (firstCall?.where?.createdAt?.gte) {
+        const since = firstCall.where.createdAt.gte;
+        const diffMs = Math.abs(since.getTime() - before.getTime());
+        // Allow 1 minute tolerance
+        expect(diffMs).toBeLessThan(60_000);
+      }
+    });
+
+    it('90d range passes since ~90 days ago to queries', async () => {
+      (prisma.$queryRaw as jest.Mock)
+        .mockResolvedValueOnce([{ count: BigInt(0) }])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]);
+
+      const result = await service.getDashboard(USER_ID, '90d');
+      expect(result.range).toBe('90d');
+    });
+  });
+});

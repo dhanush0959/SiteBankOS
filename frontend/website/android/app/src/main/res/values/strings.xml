@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SiteBank</string>
+    <string name="title_activity_main">SiteBank</string>
+    <string name="package_name">com.sitebank.app</string>
+    <string name="custom_url_scheme">com.sitebank.app</string>
+</resources>

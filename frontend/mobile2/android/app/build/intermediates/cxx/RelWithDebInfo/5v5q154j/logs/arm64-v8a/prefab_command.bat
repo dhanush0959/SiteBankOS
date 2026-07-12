@@ -1,0 +1,24 @@
+@echo off
+"C:\\Program Files\\Android\\Android Studio\\jbr\\bin\\java" ^
+  --class-path ^
+  "C:\\Users\\TARUN KUMAR\\.gradle\\caches\\modules-2\\files-2.1\\com.google.prefab\\cli\\2.1.0\\aa32fec809c44fa531f01dcfb739b5b3304d3050\\cli-2.1.0-all.jar" ^
+  com.google.prefab.cli.AppKt ^
+  --build-system ^
+  cmake ^
+  --platform ^
+  android ^
+  --abi ^
+  arm64-v8a ^
+  --os-version ^
+  24 ^
+  --stl ^
+  c++_shared ^
+  --ndk-version ^
+  27 ^
+  --output ^
+  "C:\\Users\\TARUNK~1\\AppData\\Local\\Temp\\agp-prefab-staging8427529101164499441\\staged-cli-output" ^
+  "C:\\Projects\\SiteBank\\frontend\\mobile2\\android\\app\\build\\intermediates\\cxx\\refs\\react-native-worklets\\2f1w7yk4" ^
+  "C:\\Users\\TARUN KUMAR\\.gradle\\caches\\9.3.1\\transforms\\59620672dad6b66e63202d7c7879dbd9\\workspace\\transformed\\react-android-0.85.3-release\\prefab" ^
+  "C:\\Projects\\SiteBank\\frontend\\mobile2\\android\\app\\build\\intermediates\\cxx\\refs\\react-native-reanimated\\4x4w4o3d" ^
+  "C:\\Users\\TARUN KUMAR\\.gradle\\caches\\9.3.1\\transforms\\7a37de1c07810a7b61641ccd7881b784\\workspace\\transformed\\hermes-android-250829098.0.10-release\\prefab" ^
+  "C:\\Users\\TARUN KUMAR\\.gradle\\caches\\9.3.1\\transforms\\6f1f7af63467440b9fe6f23d6ac7fd9b\\workspace\\transformed\\fbjni-0.7.0\\prefab"

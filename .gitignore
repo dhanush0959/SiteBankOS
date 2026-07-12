@@ -1,0 +1,37 @@
+node_modules
+dist
+.next
+.turbo
+coverage
+*.tsbuildinfo
+*.local
+.env
+.env.*
+!.env.example
+.claude
+.deepseek
+CLAUDE.md
+# Prisma
+# (migration SQL files ARE committed — do not exclude them)
+
+# Build
+apps/web/.next
+apps/api/dist
+
+# Android
+.android-sdk
+apps/android/.gradle-home
+apps/android/.android-user
+apps/android/app/build/
+apps/android/local.properties
+*.apk
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo

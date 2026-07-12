@@ -1,0 +1,53 @@
+CMake Error at C:/Projects/SiteBank/frontend/mobile2/android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake:9 (add_subdirectory):
+  add_subdirectory given source
+  "C:/Projects/SiteBank/frontend/mobile2/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/"
+  which is not an existing directory.
+Call Stack (most recent call first):
+  C:/Projects/SiteBank/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:97 (include)
+  CMakeLists.txt:31 (include)
+
+
+CMake Error at C:/Projects/SiteBank/frontend/mobile2/android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake:15 (add_subdirectory):
+  add_subdirectory given source
+  "C:/Projects/SiteBank/node_modules/react-native-webview/android/build/generated/source/codegen/jni/"
+  which is not an existing directory.
+Call Stack (most recent call first):
+  C:/Projects/SiteBank/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:97 (include)
+  CMakeLists.txt:31 (include)
+
+
+CMake Error at C:/Projects/SiteBank/frontend/mobile2/android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake:17 (add_subdirectory):
+  add_subdirectory given source
+  "C:/Projects/SiteBank/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/"
+  which is not an existing directory.
+Call Stack (most recent call first):
+  C:/Projects/SiteBank/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:97 (include)
+  CMakeLists.txt:31 (include)
+
+
+CMake Error at C:/Projects/SiteBank/frontend/mobile2/android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake:18 (add_subdirectory):
+  add_subdirectory given source
+  "C:/Projects/SiteBank/node_modules/react-native-reanimated/android/build/generated/source/codegen/jni/"
+  which is not an existing directory.
+Call Stack (most recent call first):
+  C:/Projects/SiteBank/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:97 (include)
+  CMakeLists.txt:31 (include)
+
+
+CMake Error at C:/Projects/SiteBank/frontend/mobile2/android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake:19 (add_subdirectory):
+  add_subdirectory given source
+  "C:/Projects/SiteBank/node_modules/react-native-worklets/android/build/generated/source/codegen/jni/"
+  which is not an existing directory.
+Call Stack (most recent call first):
+  C:/Projects/SiteBank/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:97 (include)
+  CMakeLists.txt:31 (include)
+
+
+CMake Error at C:/Projects/SiteBank/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:100 (target_link_libraries):
+  Cannot specify link libraries for target "react_codegen_rnasyncstorage"
+  which is not built by this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:31 (include)
+
+
+ninja: error: rebuilding 'build.ninja': subcommand failed
