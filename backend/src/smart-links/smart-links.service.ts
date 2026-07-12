@@ -355,7 +355,8 @@ export class SmartLinksService {
     const lng = typeof locationRaw['lng'] === 'number' ? locationRaw['lng'] : NaN;
 
     // If nearby amenities are missing, trigger a background fetch for next time
-    if (property.nearbyAmenities.length === 0 && !isNaN(lat) && !isNaN(lng)) {
+    const nearby = property.nearbyAmenities as any[] | null | undefined;
+    if ((!nearby || nearby.length === 0) && !isNaN(lat) && !isNaN(lng)) {
       this.fetchNearbyFacilities(property.id, lat, lng).catch(() => {});
     }
 
@@ -379,7 +380,7 @@ export class SmartLinksService {
         amenities: Array.isArray(property.amenities)
           ? (property.amenities as string[])
           : null,
-        nearbyAmenities: property.nearbyAmenities.map(a => ({
+        nearbyAmenities: (nearby || []).map((a: any) => ({
           category: a.category,
           name: a.name,
           distanceKm: a.distanceKm,

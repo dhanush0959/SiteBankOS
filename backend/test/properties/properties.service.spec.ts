@@ -12,6 +12,9 @@ const makePrisma = () => ({
   subscription: {
     findUnique: vi.fn(),
   },
+  user: {
+    findUnique: vi.fn(),
+  },
   property: {
     count: vi.fn(),
     create: vi.fn(),
