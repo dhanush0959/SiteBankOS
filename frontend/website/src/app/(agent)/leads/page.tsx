@@ -103,22 +103,59 @@ export default function LeadsPage() {
           </CardContent>
         </Card>
       ) : isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-14 bg-muted/30 rounded-lg animate-pulse" />
-          ))}
-        </div>
-      ) : !data || data.items.length === 0 ? (
-        <Card className="border-0 shadow-sm overflow-hidden">
-          <CardContent className="p-12 text-center">
-            <div className="w-14 h-14 rounded-lg bg-muted/30 flex items-center justify-center mx-auto mb-3">
-              <Users className="h-7 w-7 text-muted-foreground/40" />
+        <Card className="border-0 shadow-sm overflow-hidden bg-white">
+          <CardContent className="p-0">
+            <div className="divide-y border-b border-slate-100">
+              {/* Header Skeleton */}
+              <div className="bg-slate-50 flex items-center px-4 py-3 gap-4">
+                <div className="h-4 w-32 bg-slate-200/60 rounded animate-pulse" />
+                <div className="h-4 w-40 bg-slate-200/60 rounded animate-pulse hidden md:block" />
+                <div className="h-4 w-24 bg-slate-200/60 rounded animate-pulse" />
+              </div>
+              {/* Rows Skeleton */}
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center px-4 py-4 gap-4">
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-1/3 bg-slate-100 rounded animate-pulse" />
+                    <div className="h-3 w-1/4 bg-slate-100 rounded animate-pulse" />
+                  </div>
+                  <div className="flex-1 space-y-2 hidden md:block">
+                    <div className="h-4 w-2/3 bg-slate-100 rounded animate-pulse" />
+                    <div className="h-3 w-1/2 bg-slate-100 rounded animate-pulse" />
+                  </div>
+                  <div className="w-24">
+                    <div className="h-6 w-full bg-slate-100 rounded-full animate-pulse" />
+                  </div>
+                  <div className="w-16 hidden sm:block">
+                    <div className="h-6 w-full bg-slate-100 rounded-full animate-pulse" />
+                  </div>
+                  <div className="w-20 hidden lg:block">
+                    <div className="h-4 w-full bg-slate-100 rounded animate-pulse" />
+                  </div>
+                </div>
+              ))}
             </div>
-            <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-              No leads {status ? `in ${status.replace(/_/g, ' ')}` : 'yet'}. Buyers who fill the contact form on your smart-link pages appear here.
-            </p>
           </CardContent>
         </Card>
+      ) : !data || data.items.length === 0 ? (
+        <div className="rounded-2xl border-2 border-dashed border-border/40 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 p-12 text-center">
+          <div className="relative w-20 h-20 mx-auto">
+            <div className="relative w-20 h-20 rounded-2xl bg-primary flex items-center justify-center ring-1 ring-primary/20 shadow-lg shadow-primary/20">
+              <Users className="h-9 w-9 text-white" />
+            </div>
+          </div>
+          <h2 className="mt-6 text-xl font-bold tracking-tight">No leads {status ? `in ${status.replace(/_/g, ' ')}` : 'yet'}</h2>
+          <p className="mt-2.5 text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
+            Buyers who fill the contact form on your smart-link pages appear here. Share your properties to generate leads!
+          </p>
+          {!status && (
+            <div className="mt-7">
+              <Link href="/properties" className="inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 font-semibold shadow-md shadow-primary/20 transition-all">
+                Share Properties
+              </Link>
+            </div>
+          )}
+        </div>
       ) : (
         /* STANDARD FLAT TABLE DISPLAY */
         <Card className="border-0 shadow-sm overflow-hidden">

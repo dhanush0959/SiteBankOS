@@ -56,8 +56,8 @@ export function LeadForm({ slug, propertyTitle }: { slug: string; propertyTitle:
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="font-bold text-emerald-800 dark:text-emerald-400">Thanks for your interest!</p>
-        <p className="text-xs text-emerald-700 dark:text-emerald-500 mt-1">The agent will get in touch soon.</p>
+        <p className="font-bold text-emerald-800">Thanks for your interest!</p>
+        <p className="text-xs text-emerald-700 mt-1">The agent will get in touch soon.</p>
       </div>
     );
   }

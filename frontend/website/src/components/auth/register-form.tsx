@@ -90,10 +90,10 @@ export function RegisterForm() {
   return (
     <>
       <Preloader isVisible={loading} message="Creating your workspace..." />
-      <Card className="border border-border shadow-xl rounded-2xl bg-white dark:bg-card">
+      <Card className="border border-border shadow-xl rounded-2xl bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-4 pt-6">
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/[0.02] border border-border/50 rounded-xl mb-4 transition-colors">
+            <div className="flex items-center justify-between p-3 bg-slate-50 border border-border/50 rounded-xl mb-4 transition-colors">
               <div className="space-y-0.5">
                 <Label className="text-sm font-bold">Register as Agency?</Label>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider">For real estate companies</p>
@@ -108,7 +108,7 @@ export function RegisterForm() {
             {isAgency && (
               <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
                 <Label htmlFor="agencyName" className="font-bold text-xs uppercase tracking-widest text-accent">Agency / Company Name</Label>
-                <Input id="agencyName" placeholder="Skyline Realty Pvt Ltd" {...form.register('agencyName')} className="h-11 rounded-xl bg-slate-50 dark:bg-white/[0.02]" />
+                <Input id="agencyName" placeholder="Skyline Realty Pvt Ltd" {...form.register('agencyName')} className="h-11 rounded-xl bg-slate-50" />
                 {form.formState.errors.agencyName && (
                   <p className="text-sm text-destructive">{form.formState.errors.agencyName.message}</p>
                 )}
@@ -117,21 +117,21 @@ export function RegisterForm() {
 
             <div className="space-y-2">
               <Label htmlFor="name" className="font-semibold">Full Name</Label>
-              <Input id="name" placeholder="Rajesh Kumar" {...form.register('name')} className="h-11 rounded-xl bg-slate-50 dark:bg-white/[0.02]" />
+              <Input id="name" placeholder="Rajesh Kumar" {...form.register('name')} className="h-11 rounded-xl bg-slate-50" />
               {form.formState.errors.name && (
                 <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="font-semibold">Email</Label>
-              <Input id="email" type="email" placeholder="agent@example.com" {...form.register('email')} className="h-11 rounded-xl bg-slate-50 dark:bg-white/[0.02]" />
+              <Input id="email" type="email" placeholder="agent@example.com" {...form.register('email')} className="h-11 rounded-xl bg-slate-50" />
               {form.formState.errors.email && (
                 <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone" className="font-semibold">Mobile Number (optional)</Label>
-              <Input id="phone" type="tel" placeholder="9876543210" {...form.register('phone')} className="h-11 rounded-xl bg-slate-50 dark:bg-white/[0.02]" />
+              <Input id="phone" type="tel" placeholder="9876543210" {...form.register('phone')} className="h-11 rounded-xl bg-slate-50" />
               {form.formState.errors.phone && (
                 <p className="text-sm text-destructive">{form.formState.errors.phone.message}</p>
               )}
@@ -143,7 +143,7 @@ export function RegisterForm() {
                 type="password"
                 placeholder="Min. 8 characters"
                 {...form.register('password')}
-                className="h-11 rounded-xl bg-slate-50 dark:bg-white/[0.02]"
+                className="h-11 rounded-xl bg-slate-50"
               />
               {form.formState.errors.password && (
                 <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>

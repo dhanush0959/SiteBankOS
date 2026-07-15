@@ -152,7 +152,7 @@ export default function PropertyMap({ properties, selectedProperty, onSelect }: 
           <button
             onClick={toggleFullscreen}
             title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            className="w-9 h-9 rounded-xl bg-white dark:bg-gray-900 shadow-lg border border-white/30 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-150"
+            className="w-9 h-9 rounded-xl bg-white shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-150"
           >
             {isFullscreen ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -175,7 +175,7 @@ export default function PropertyMap({ properties, selectedProperty, onSelect }: 
           <button
             onClick={() => setMapStyle((s) => (s === 'streets' ? 'satellite' : 'streets'))}
             title={mapStyle === 'streets' ? 'Switch to Satellite' : 'Switch to Streets'}
-            className="w-9 h-9 rounded-xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg border border-white/30 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-150"
+            className="w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:bg-white hover:scale-105 active:scale-95 transition-all duration-150"
           >
             {mapStyle === 'streets' ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -196,9 +196,9 @@ export default function PropertyMap({ properties, selectedProperty, onSelect }: 
         {/* Property count badge */}
         {properties.length > 0 && (
           <div className="absolute top-3 left-3 z-[1001]">
-            <div className="flex items-center gap-1.5 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg border border-white/30 rounded-xl px-3 py-1.5">
+            <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md shadow-lg border border-white/30 rounded-xl px-3 py-1.5">
               <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+              <span className="text-xs font-semibold text-gray-800">
                 {properties.length} {properties.length === 1 ? 'property' : 'properties'}
               </span>
             </div>

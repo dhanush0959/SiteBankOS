@@ -6,62 +6,33 @@
 
 @layer base {
   :root {
-    /* ─── Light Mode ─── Green/Teal SiteBank Theme */
+    /* ─── Light Mode ─── Blue Theme */
     --background: 0 0% 97.5%;      /* #F9F9F9 light gray bg */
-    --foreground: 150 10% 15%;      /* Near-black with green undertone */
-    --card: 0 0% 100%;              /* Pure white cards */
-    --card-foreground: 150 10% 15%;
+    --foreground: 221 39% 11%;     /* Near-black with blue undertone */
+    --card: 0 0% 100%;             /* Pure white cards */
+    --card-foreground: 221 39% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 150 10% 15%;
-    --primary: 150 20% 20%;         /* Dark olive green – sidebar & primary */
+    --popover-foreground: 221 39% 11%;
+    --primary: 221 83% 53%;        /* Vibrant Blue */
     --primary-foreground: 0 0% 98%;
-    --secondary: 150 8% 95%;
-    --secondary-foreground: 150 10% 15%;
-    --muted: 150 8% 95%;
-    --muted-foreground: 150 5% 50%;
-    --accent: 162 63% 41%;          /* Teal/Emerald – buttons & accents */
+    --secondary: 221 14% 93%;
+    --secondary-foreground: 221 39% 11%;
+    --muted: 221 14% 93%;
+    --muted-foreground: 221 15% 45%;
+    --accent: 221 83% 53%;         /* Vibrant Blue – buttons & accents */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 150 10% 90%;
-    --input: 150 10% 90%;
-    --ring: 162 63% 41%;
+    --border: 221 14% 85%;
+    --input: 221 14% 85%;
+    --ring: 221 83% 53%;
     --radius: 0.75rem;
 
-    /* ─── Sidebar ─── */
-    --sidebar-bg: 150 18% 18%;     /* Dark olive green #2D3B2D */
-    --sidebar-fg: 0 0% 96%;
-    --sidebar-muted: 150 12% 25%;
-    --sidebar-accent: 162 63% 41%; /* Teal accent */
-  }
-
-  .dark {
-    /* ─── Dark Mode ─── Deep Green/Teal */
-    --background: 150 15% 6%;
-    --foreground: 0 0% 96%;
-    --card: 150 15% 9%;
-    --card-foreground: 0 0% 96%;
-    --popover: 150 15% 9%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 150 20% 20%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 150 10% 15%;
-    --secondary-foreground: 0 0% 96%;
-    --muted: 150 10% 15%;
-    --muted-foreground: 150 5% 60%;
-    --accent: 162 63% 41%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 150 10% 15%;
-    --input: 150 10% 15%;
-    --ring: 162 63% 41%;
-
-    /* ─── Sidebar (same in dark) ─── */
-    --sidebar-bg: 150 18% 14%;
-    --sidebar-fg: 0 0% 96%;
-    --sidebar-muted: 150 12% 20%;
-    --sidebar-accent: 162 63% 41%;
+    /* ─── Sidebar/Nav ─── */
+    --sidebar-bg: 0 0% 100%;       /* White nav */
+    --sidebar-fg: 221 39% 11%;
+    --sidebar-muted: 221 14% 93%;
+    --sidebar-accent: 221 83% 53%; /* Blue accent */
   }
 }
 
@@ -92,17 +63,17 @@
 
   /* ─── Advanced Glassmorphism Utilities ─── */
   .premium-glass {
-    @apply bg-white dark:bg-[#0f1a14] border border-white/20 dark:border-white/5;
+    @apply bg-white/90 border border-white/20;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
   }
   
   .premium-glass-card {
-    @apply bg-card dark:bg-card border border-border/50 dark:border-white/5;
+    @apply bg-card border border-border/50;
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 4px 20px -4px rgba(0, 0, 0, 0.1);
   }
 
   .premium-glass-panel {
-    @apply bg-background border-t border-white/20 dark:border-white/5;
+    @apply bg-background border-t border-white/20;
   }
 
   /* ─── Solid Colors ─── */

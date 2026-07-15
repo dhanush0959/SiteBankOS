@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, Search, List, MapPin, Building2, X, Filter, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -96,6 +97,54 @@ export default function PropertiesPage() {
         <h1 className="text-xl font-black tracking-tight text-slate-900 font-heading">
           {greeting}, {firstName}
         </h1>
+      </div>
+
+      {/* ─── Quick Stats Banner ─── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" style={{ animationDelay: '100ms' }}>
+        <Card className="rounded-2xl border-0 shadow-sm bg-white overflow-hidden group">
+          <CardContent className="p-5 flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total</p>
+              <p className="text-2xl font-black text-slate-900">{total}</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors shadow-sm">
+              <Building2 className="h-6 w-6" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="rounded-2xl border-0 shadow-sm bg-white overflow-hidden group">
+          <CardContent className="p-5 flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active</p>
+              <p className="text-2xl font-black text-slate-900">{data?.items.filter(p => p.status === 'ACTIVE').length || 0}</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors shadow-sm">
+              <div className="w-3 h-3 rounded-full bg-current animate-pulse" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="rounded-2xl border-0 shadow-sm bg-white overflow-hidden group">
+          <CardContent className="p-5 flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Drafts</p>
+              <p className="text-2xl font-black text-slate-900">{data?.items.filter(p => p.status === 'ARCHIVED' || !p.status).length || 0}</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors shadow-sm">
+              <List className="h-6 w-6" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="rounded-2xl border-0 shadow-sm bg-white overflow-hidden group cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all" onClick={() => window.location.href='/properties/new'}>
+          <CardContent className="p-5 flex items-center justify-center h-full bg-primary/5 group-hover:bg-primary/10">
+            <div className="flex items-center gap-2 text-primary font-bold">
+              <Plus className="h-5 w-5" />
+              Add New
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* ─── Search & Filters Section ─── */}
@@ -284,10 +333,10 @@ export default function PropertiesPage() {
         )}
       </div>
 
-      {/* Fullscreen Map */}
-      {mapOpen && (
-        <div className="fixed inset-0 z-[200] flex flex-col bg-white animate-fade-in">
-          <div className="flex items-center justify-between px-6 h-16 border-b border-slate-100 shrink-0">
+      {/* Fullscreen Map via Portal */}
+      {mapOpen && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex flex-col bg-white animate-fade-in">
+          <div className="flex items-center justify-between px-6 h-16 border-b border-slate-100 shrink-0 bg-white shadow-sm z-10">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
                 <MapPin className="h-5 w-5 text-white" />
@@ -296,13 +345,13 @@ export default function PropertiesPage() {
             </div>
             <button
               onClick={() => { setMapOpen(false); setSelectedProperty(null); }}
-              className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors"
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors shadow-sm border border-slate-200"
             >
               <X className="h-6 w-6" />
             </button>
           </div>
 
-          <div className="flex-1 relative overflow-hidden">
+          <div className="flex-1 relative overflow-hidden bg-slate-50">
             <PropertyMap
               properties={propertiesWithLocation}
               selectedProperty={selectedProperty}
@@ -311,35 +360,38 @@ export default function PropertiesPage() {
           </div>
 
           {selectedProperty && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 animate-slide-up-fade">
-              <Card className="rounded-[28px] shadow-2xl border-0 p-2 bg-white">
-                <CardContent className="p-3 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
-                      <img 
-                        src={selectedProperty.media?.[0]?.cdnUrl || selectedProperty.media?.[0]?.fileUrl} 
-                        className="w-full h-full object-cover" 
-                        alt=""
-                        onError={(e) => (e.currentTarget.style.display = 'none')}
-                      />
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 animate-slide-up-fade pointer-events-none">
+              <div className="pointer-events-auto">
+                <Card className="rounded-[28px] shadow-2xl border-0 p-2 bg-white/95 backdrop-blur-xl">
+                  <CardContent className="p-3 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 shrink-0 shadow-inner">
+                        <img 
+                          src={selectedProperty.media?.[0]?.cdnUrl || selectedProperty.media?.[0]?.fileUrl} 
+                          className="w-full h-full object-cover" 
+                          alt=""
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-black text-slate-900 truncate text-sm font-plus">{selectedProperty.title}</p>
+                        <p className="text-sm font-black text-primary">
+                          {selectedProperty.priceOnRequest ? 'On Request' : formatINR(selectedProperty.price ?? null)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="font-black text-slate-900 truncate text-sm font-plus">{selectedProperty.title}</p>
-                      <p className="text-sm font-black text-primary">
-                        {selectedProperty.priceOnRequest ? 'On Request' : formatINR(selectedProperty.price ?? null)}
-                      </p>
-                    </div>
-                  </div>
-                  <Button asChild className="rounded-2xl h-12 px-6 bg-primary shadow-lg shadow-primary/20 shrink-0 font-bold">
-                    <Link href={`/properties/${selectedProperty.id}`} onClick={() => setMapOpen(false)}>
-                      Details
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+                    <Button asChild className="rounded-2xl h-12 px-6 bg-primary shadow-lg shadow-primary/20 shrink-0 font-bold">
+                      <Link href={`/properties/${selectedProperty.id}`} onClick={() => setMapOpen(false)}>
+                        Details
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
       
       {bulkUploadOpen && <BulkUploadDialog onClose={() => setBulkUploadOpen(false)} />}

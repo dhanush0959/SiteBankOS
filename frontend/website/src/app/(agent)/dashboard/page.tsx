@@ -116,7 +116,11 @@ export default function DashboardPage() {
           </div>
         </div>
         {isLoading ? (
-          <div className="h-40 bg-muted/20 rounded animate-pulse" />
+          <div className="h-[300px] w-full bg-slate-50 border border-slate-100 rounded-xl flex items-end px-4 pb-4 gap-2 animate-pulse">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="flex-1 bg-slate-200/60 rounded-t-sm" style={{ height: `${Math.random() * 60 + 20}%` }} />
+            ))}
+          </div>
         ) : (
           <DualLineChart data={activeData?.timeseries ?? []} />
         )}
@@ -139,7 +143,16 @@ export default function DashboardPage() {
             <Link href="/properties" className="text-xs text-primary hover:underline">View all</Link>
           </div>
           {!activeData || activeData.topProperties.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No activity in this range yet.</p>
+            <div className="rounded-2xl border-2 border-dashed border-border/40 bg-slate-50/50 p-8 text-center">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto shadow-sm ring-1 ring-slate-200/50">
+                <Building2 className="h-5 w-5 text-slate-400" />
+              </div>
+              <p className="mt-4 text-sm font-semibold text-slate-700">No activity yet</p>
+              <p className="mt-1 text-xs text-muted-foreground">Share your properties to start tracking views and leads.</p>
+              <Link href="/properties" className="mt-4 inline-flex items-center text-xs font-bold text-primary hover:underline">
+                View Properties →
+              </Link>
+            </div>
           ) : (
             <ul className="divide-y text-sm">
               {activeData.topProperties.map((p) => (

@@ -49,7 +49,7 @@ export function PropertyCard({ property }: { property: Property }) {
     <>
       <Link
         href={`/properties/${property.id}`}
-        className="group block relative rounded-2xl bg-card border-2 border-slate-200 dark:border-slate-800 overflow-hidden hover-lift w-full hover:border-primary/40 transition-colors shadow-sm"
+        className="group block relative rounded-2xl bg-card border-2 border-slate-200 overflow-hidden hover-lift w-full hover:border-primary/40 transition-colors shadow-sm"
       >
         {/* Top Image Section */}
         <div className="relative aspect-video w-full bg-muted overflow-hidden">

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -31,6 +31,35 @@ export function LoginForm() {
   const qc = useQueryClient();
 
   const form = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  // Spotlight & Parallax State
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [cardRotation, setCardRotation] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePosition({ x, y });
+
+    // Parallax calculation (max 5 degrees rotation)
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -5;
+    const rotateY = ((x - centerX) / centerX) * 5;
+    
+    setCardRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setCardRotation({ x: 0, y: 0 });
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
 
   // Silent refresh on mount
   useEffect(() => {
@@ -107,52 +136,77 @@ export function LoginForm() {
   return (
     <>
       <Preloader isVisible={loading} message="Signing you in..." />
-      <Card className="border border-border shadow-xl rounded-2xl bg-white dark:bg-card">
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4 pt-6">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-1.5 font-semibold">
-                <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                Email
-              </Label>
+      <div className="relative group w-full" style={{ perspective: '1000px' }}>
+        <Card 
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          onMouseEnter={handleMouseEnter}
+          className="border border-border shadow-2xl rounded-2xl bg-white/95 backdrop-blur-xl relative overflow-hidden"
+          style={{
+            transform: `rotateX(${cardRotation.x}deg) rotateY(${cardRotation.y}deg) scale(${isHovered ? 1.02 : 1})`,
+            transition: isHovered ? 'none' : 'transform 0.5s ease-out',
+            transformStyle: 'preserve-3d'
+          }}
+        >
+          {/* Spotlight Effect */}
+          <div 
+            className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-0"
+            style={{
+              background: `radial-gradient(500px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.12), transparent 40%)`
+            }}
+          />
+          
+          <div className="relative z-10" style={{ transform: 'translateZ(20px)' }}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-6 pt-6">
+            <div className="relative">
               <Input
                 id="email"
                 type="email"
-                placeholder="agent@example.com"
+                placeholder=" "
                 {...form.register('email')}
-                className="rounded-xl h-11 bg-slate-50 dark:bg-white/[0.02]"
+                className="peer rounded-xl h-12 bg-slate-50 border-slate-200 placeholder-transparent focus:ring-primary/20 focus:border-primary px-4 pt-4 pb-1 transition-all"
               />
+              <Label 
+                htmlFor="email" 
+                className="absolute left-4 top-1.5 text-[10px] uppercase font-bold tracking-widest text-muted-foreground transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:normal-case peer-placeholder-shown:font-medium peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:uppercase peer-focus:font-bold peer-focus:text-primary flex items-center gap-1.5 pointer-events-none"
+              >
+                Email
+              </Label>
               {form.formState.errors.email && (
-                <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
+                <p className="text-xs font-medium text-destructive mt-1.5 ml-1">{form.formState.errors.email.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-1.5 font-semibold">
-                <Lock className="h-3.5 w-3.5 text-muted-foreground" />
-                Password
-              </Label>
+
+            <div className="relative">
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder=" "
                 {...form.register('password')}
-                className="rounded-xl h-11 bg-slate-50 dark:bg-white/[0.02]"
+                className="peer rounded-xl h-12 bg-slate-50 border-slate-200 placeholder-transparent focus:ring-primary/20 focus:border-primary px-4 pt-4 pb-1 transition-all"
               />
+              <Label 
+                htmlFor="password" 
+                className="absolute left-4 top-1.5 text-[10px] uppercase font-bold tracking-widest text-muted-foreground transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:normal-case peer-placeholder-shown:font-medium peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:uppercase peer-focus:font-bold peer-focus:text-primary flex items-center gap-1.5 pointer-events-none"
+              >
+                Password
+              </Label>
               {form.formState.errors.password && (
-                <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
+                <p className="text-xs font-medium text-destructive mt-1.5 ml-1">{form.formState.errors.password.message}</p>
               )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4 pb-6">
             <Button
               type="submit"
-              className="w-full rounded-xl h-11 bg-accent text-white hover:bg-accent/90 transition-all font-semibold shadow-md active:scale-[0.98]"
+              className="w-full rounded-xl h-12 bg-primary text-white hover:bg-primary/90 transition-all font-semibold shadow-lg shadow-primary/25 active:scale-[0.98]"
               disabled={loading}
             >
               Sign In
             </Button>
             <p className="text-sm text-center">
-              <Link href="/forgot-password" className="text-muted-foreground hover:text-accent transition-colors">
+              <Link href="/forgot-password" className="text-muted-foreground hover:text-primary transition-colors">
                 Forgot password?
               </Link>
             </p>
@@ -162,13 +216,15 @@ export function LoginForm() {
             </p>
             <p className="text-sm text-muted-foreground text-center">
               No account?{' '}
-              <Link href="/register" className="text-accent hover:underline font-semibold">
+              <Link href="/register" className="text-primary hover:underline font-semibold">
                 Create one free
               </Link>
             </p>
           </CardFooter>
         </form>
+        </div>
       </Card>
+      </div>
     </>
   );
 }
